@@ -1,19 +1,13 @@
 import {
   BelongsTo,
-  BelongsToMany,
   Column,
   DataType,
   ForeignKey,
-  HasMany,
-  HasOne,
   Model,
   Table
 } from "sequelize-typescript";
 import {ApiProperty} from "@nestjs/swagger";
 import { User } from "../users/users.model";
-import { Role } from "../roles/roles.model";
-import { UserRoles } from "../roles/user-roles.model";
-// import {Post} from "../posts/posts.model";
 
 
 interface ProfileCreationAttrs {
@@ -49,10 +43,4 @@ export class Profile extends Model<Profile, ProfileCreationAttrs> {
   @BelongsTo(() => User)
   users: User;
 
-
-
-
-
-  // @HasMany(() => Post)
-  // posts: Post[];
 }

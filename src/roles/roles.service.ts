@@ -18,4 +18,8 @@ export class RolesService {
         return role;
     }
 
+    async getAllRoles(){
+        const roles = await this.roleRepository.findAll();
+        return roles;
+    }
 }
