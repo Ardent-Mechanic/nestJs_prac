@@ -19,18 +19,27 @@ export class User extends Model<User, UserCreationAttrs> {
   @Column({ type: DataType.INTEGER, unique: true, autoIncrement: true, primaryKey: true })
   id: number;
 
+  @ApiProperty({example: 'user@mau.iu', description: 'Почта'})
   @Column({ type: DataType.STRING, unique: true, allowNull: false })
   email: string;
 
+  @ApiProperty({example: '$2a$05$Xo1bVOGMEaU2', description: 'пароль'})
   @Column({ type: DataType.STRING, allowNull: false })
   password: string;
 
+  @ApiProperty({example: 'true', description: 'бан пользователя'})
   @Column({ type: DataType.BOOLEAN, defaultValue: false })
   banned: boolean;
 
-
+  @ApiProperty({example: 'забанен по причине ...', description: 'причина бана'})
   @Column({ type: DataType.STRING, allowNull: true })
   banReason: string;
+
+  @ApiProperty({example: '2023-04-05T10:16:37.003Z', description: 'дата регистрации'})
+  readonly createdAt: Date;
+
+  @ApiProperty({example: '2023-04-05T10:16:37.003Z', description: 'дата последнего обновления'})
+  readonly updatedAt: Date;
 
   @BelongsToMany(() => Role, () => UserRoles)
   roles: Role[];

@@ -1,16 +1,16 @@
 import { applyDecorators, Type } from "@nestjs/common";
 import { ApiOkResponse, getSchemaPath } from "@nestjs/swagger";
-import { ShowUserDto } from "../dto/show-user.dto";
-import { ShowRoleDto } from "../../roles/dto/show-role.dto";
+import { User } from "../users.model";
 
-export const ApiShowUserResponse = <TModel extends Type<any>>(
+export const ApiShowUserResponse = <TModel extends Type<any>> (
   model: TModel,
 ) => {
+  console.log(typeof model);
   return applyDecorators(
     ApiOkResponse({
       schema: {
         allOf: [
-          { $ref: getSchemaPath(ShowUserDto) },
+          { $ref: getSchemaPath(User) },
           {
             properties: {
               roles: {
