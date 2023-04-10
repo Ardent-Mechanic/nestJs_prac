@@ -10,13 +10,11 @@ import { RolesModule } from "../roles/roles.module";
 import { AuthModule } from "../auth/auth.module";
 import { ProfileModule } from "../profile/profile.module";
 
-// import {Post} from "../posts/posts.model";
 
 @Module({
   controllers: [UsersController],
   providers: [UsersService],
   imports: [
-    // SequelizeModule.forFeature([User, Role, UserRoles, Post]),
     SequelizeModule.forFeature([User, Profile, Role, UserRoles]),
     RolesModule,
     ProfileModule,

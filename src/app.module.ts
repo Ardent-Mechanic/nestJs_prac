@@ -14,7 +14,6 @@ import * as path from 'path';
 import { Profile } from "./profile/profile.model";
 import { TextBlockModule } from './text-block/text-block.module';
 import { TextBlock } from "./text-block/text-block.model";
-// import { TextModuleController } from './text-module/text-module.controller';
 import { Files } from "./files/files.model";
 import { TextBlockFilesModel } from "./files/text-block-files.model";
 
@@ -44,7 +43,6 @@ import { TextBlockFilesModel } from "./files/text-block-files.model";
         AuthModule,
         ProfileModule,
         TextBlockModule,
-        // PostsModule,
         FilesModule
     ]
 })
