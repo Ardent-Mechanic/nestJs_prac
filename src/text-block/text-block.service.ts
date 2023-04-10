@@ -1,17 +1,11 @@
-import { HttpException, HttpStatus, Injectable, Post, UseGuards } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable} from "@nestjs/common";
 import { InjectModel } from "@nestjs/sequelize";
 import { TextBlock } from "./text-block.model";
 import { CreateTextBlockDto } from "./dto/create-text-block.dto";
 import { FilesService } from "../files/files.service";
-import { CreateFilesDto } from "../files/dto/create-files.dto";
-import { AddRoleDto } from "../users/dto/add-role.dto";
 import { AddFileDto } from "./dto/add-file.dto";
-import { ApiResponse } from "@nestjs/swagger";
-import { Roles } from "../auth/roles-auth.decorator";
-import { RolesGuard } from "../auth/roles.guard";
 import { UpdateFileDto } from "./dto/update-file.dto";
-import anything = jasmine.anything;
-import any = jasmine.any;
+import { FilterTextBlockDto } from "./dto/filter-text-block.dto";
 
 @Injectable()
 export class TextBlockService {
@@ -25,15 +19,13 @@ export class TextBlockService {
   }
 
   async addFile(dto: AddFileDto) {
-    const textBlock = await this.textBlockRepository.findOne({ where: { uniqueName: dto.uniqueName } });
+    let textBlock = await this.textBlockRepository.findOne({ where: { uniqueName: dto.uniqueName } });
     const file = await this.fileService.getFile(dto.value);
     if (file && textBlock) {
       await this.fileService.fileUpdate({ essenceId: textBlock.id, essenceTable: textBlock.uniqueName }, file.image);
-      // console.log(textBlock.id + " " + textBlock.uniqueName);
-      // file.essenceId = textBlock.id;
-      // file.essenceTable = textBlock.uniqueName;
       await textBlock.$add("files", file.id);
-      return dto;
+      textBlock = await this.textBlockRepository.findOne({ where: { uniqueName: dto.uniqueName }, include: ['files'] });
+      return textBlock;
     }
     throw new HttpException("Текстовый блок или файл не найдены", HttpStatus.NOT_FOUND);
   }
@@ -44,7 +36,7 @@ export class TextBlockService {
     return textBlock;
   }
 
-  async getFilterTextBlock(dto: CreateTextBlockDto) {
+  async getFilterTextBlock(dto: FilterTextBlockDto) {
 
     console.log(dto);
     const textBlock = await this.textBlockRepository.findAll({
