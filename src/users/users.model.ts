@@ -45,6 +45,6 @@ export class User extends Model<User, UserCreationAttrs> {
   roles: Role[];
 
   @HasOne(() => Profile)
-  profiles: Profile;
+  profile: Profile;
 
 }

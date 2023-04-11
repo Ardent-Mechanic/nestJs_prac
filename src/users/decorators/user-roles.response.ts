@@ -2,7 +2,7 @@ import { applyDecorators, Type } from "@nestjs/common";
 import { ApiOkResponse, getSchemaPath } from "@nestjs/swagger";
 import { User } from "../users.model";
 
-export const ApiShowUserResponse = <TModel extends Type<any>> (
+export const ApiOkResponseShowUser = <TModel extends Type<any>> (
   model: TModel,
 ) => {
   console.log(typeof model);
@@ -13,7 +13,7 @@ export const ApiShowUserResponse = <TModel extends Type<any>> (
           { $ref: getSchemaPath(User) },
           {
             properties: {
-              roles: {
+              value: {
                 type: 'array',
                 items: { $ref: getSchemaPath(model) },
               },

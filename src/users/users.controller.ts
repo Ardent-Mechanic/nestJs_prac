@@ -4,7 +4,7 @@ import { UsersService } from "./users.service";
 import {
   ApiCreatedResponse,
   ApiExtraModels,
-  ApiHeader,
+  ApiHeader, ApiOkResponse,
   ApiOperation,
   ApiResponse,
   ApiTags,
@@ -17,12 +17,14 @@ import { AddRoleDto } from "./dto/add-role.dto";
 import { BanUserDto } from "./dto/ban-user.dto";
 import { CreateRoleDto } from "../roles/dto/create-role.dto";
 import { ShowRoleDto } from "../roles/dto/show-role.dto";
-import { ApiShowUserResponse } from "./decorators/show-user.response";
+import { ApiOkResponseShowUser } from "./decorators/user-roles.response";
+import { CreateProfileDto } from "../profile/dto/create-profile.dto";
+import { Role } from "../roles/roles.model";
 
 
 @ApiTags("Пользователи")
-@ApiExtraModels(ShowRoleDto)
 @Controller("users")
+@ApiExtraModels(Role)
 export class UsersController {
 
   constructor(private usersService: UsersService) {
@@ -31,7 +33,7 @@ export class UsersController {
 
   @Get()
   @ApiOperation({ summary: "Получить всех пользователей" })
-  @ApiResponse({ status: 200, type: User})
+  @ApiOkResponseShowUser(CreateProfileDto)
   @Roles("ADMIN")
   @UseGuards(RolesGuard)
   getAll() {
@@ -41,7 +43,7 @@ export class UsersController {
 
   @Post("/role/add")
   @ApiOperation({ summary: "Выдать роль" })
-  @ApiShowUserResponse(ShowRoleDto)
+  @ApiOkResponseShowUser(Role)
   @Roles("ADMIN")
   @UseGuards(RolesGuard)
   addRole(@Body() dto: AddRoleDto) {
@@ -51,7 +53,7 @@ export class UsersController {
 
   @Post("/ban")
   @ApiOperation({ summary: "Забанить пользователя" })
-  @ApiResponse({ status: 200, type: User })
+  @ApiOkResponse({ status: 200, type: User })
   @Roles("ADMIN")
   @UseGuards(RolesGuard)
   ban(@Body() dto: BanUserDto) {
