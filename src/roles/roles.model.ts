@@ -23,6 +23,12 @@ export class Role extends Model<Role, RoleCreationAttrs> {
     @Column({type: DataType.STRING, allowNull: false})
     description: string;
 
+    @ApiProperty({example: '2023-04-05T10:16:37.003Z', description: 'дата создания'})
+    readonly createdAt: Date;
+
+    @ApiProperty({example: '2023-04-05T10:16:37.003Z', description: 'дата последнего обновления'})
+    readonly updatedAt: Date;
+
     @BelongsToMany(() => User, () => UserRoles)
     users: User[];
 }
