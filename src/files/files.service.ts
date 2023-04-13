@@ -42,23 +42,31 @@ export class FilesService {
   }
 
   async fileUpdate(dto, image: string){
-    const file = await this.filesRepository.update(dto, {where: { image }});
+    await this.filesRepository.update(dto, {where: { image }});
+    return {status: 'OK'};
 
   }
 
   async deleteNotUsedFiles() {
+
     const dateNow = new Date();
     dateNow.setHours(dateNow.getHours() - 1);
-    const files = await this.filesRepository.destroy({
-        where: {
 
-          [Op.or]: [
-            { createdAt: { [Op.lt]: dateNow } },
-            { [Op.and]: [
-              { essenceId: { [Op.eq]: null } },
-                { essenceTable: { [Op.eq]: null} }
-                ]}]}});
-    return files;
+    const conditions = {
+      [Op.or]: [
+        { createdAt: { [Op.lt]: dateNow } },
+        { [Op.and]: [
+            { essenceId: { [Op.eq]: null } },
+            { essenceTable: { [Op.eq]: null} }
+          ]}]};
+
+    const notUsedFiles = await this.filesRepository.findAll({where: conditions});
+    const filesName = notUsedFiles.map(value => value.image);
+    // await this.filesRepository.destroy({where: conditions});
+
+    // this._deleteLocalFile(filesName)
+
+    return {deletedImages: filesName};
   }
 
   async getFile(image: string) {
@@ -68,12 +76,14 @@ export class FilesService {
     return files;
   }
 
-  deleteLocalFile(fileName: string) {
+  _deleteLocalFile(filesName: Array<string>) {
     let fs = require("fs");
-    fs.unlink(`dist/static/${fileName}`, err => {
-      if (err) throw err; // не удалось удалить файл
-      console.log("Файл успешно удалён");
-    });
+    for (const name of filesName ){
+      fs.unlink(`dist/static/${name}`, err => {
+        if (err) throw err; // не удалось удалить файл
+        console.log("Файл успешно удалён");
+      });
+    }
   }
 
 }
