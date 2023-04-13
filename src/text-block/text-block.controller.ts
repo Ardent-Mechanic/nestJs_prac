@@ -77,7 +77,8 @@ export class TextBlockController {
 
   @Patch('/update/files')
   @ApiOperation({ summary: "Обновить файлы в текстовом блоке" })
-  @ApiOkResponseShowTextBlock(Files)
+  @ApiOkResponse({ status: 200,
+    schema: { properties: {status: {default: 'OK' }}}})
   @Roles("ADMIN")
   @UseGuards(RolesGuard)
   updateFilesIntoTextBlock(@Body() dto: UpdateFileDto){
@@ -86,7 +87,8 @@ export class TextBlockController {
 
   @Delete('/delete')
   @ApiOperation({ summary: "Удалить текстовый блок" })
-  @ApiResponse({status: 200})
+  @ApiOkResponse({ status: 200,
+    schema: { properties: {status: {default: 'OK' }}}})
   @Roles("ADMIN")
   @UseGuards(RolesGuard)
   deleteTextBlockInfo(@Body() dto: CreateTextBlockDto) {

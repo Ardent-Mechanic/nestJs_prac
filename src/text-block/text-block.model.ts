@@ -34,6 +34,12 @@ export class TextBlock extends Model<TextBlock, TextBlockCreationAttrs> {
   @Column({type: DataType.STRING, allowNull: false})
   group: string;
 
+  @ApiProperty({example: '2023-04-05T10:16:37.003Z', description: 'дата регистрации'})
+  readonly createdAt: Date;
+
+  @ApiProperty({example: '2023-04-05T10:16:37.003Z', description: 'дата последнего обновления'})
+  readonly updatedAt: Date;
+
   @BelongsToMany(() => Files,
     () => TextBlockFilesModel)
   files: Files[];

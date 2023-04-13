@@ -79,14 +79,15 @@ export class TextBlockService {
         await textBlock.$add("files", [file.id]);
       }
     }
+    return {status: 'OK'};
   }
 
   async deleteTextBlock(dto: CreateTextBlockDto) {
     const curUniqueName = dto.uniqueName;
-    const textBlock = await this.textBlockRepository.destroy({
+    await this.textBlockRepository.destroy({
       where: { uniqueName: curUniqueName }
     });
-    return textBlock;
+    return {status: 'OK'};
   }
 
 }
