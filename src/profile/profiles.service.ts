@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { CreateProfileDto } from "./dto/create-profile.dto";
 import { InjectModel } from "@nestjs/sequelize";
 import { Profile } from "./profile.model";
@@ -19,11 +19,40 @@ export class ProfilesService {
   async getProfile(id: number) {
 
     const userId = id;
-    const profile = await this.profileRepository.findOne({ where: { userId }, include: { all: true } });
+    const profile = await this.profileRepository.findOne({ where: { userId }, include: ['users'] });
     return profile;
   }
 
   async updateProfile(req: any, dto: CreateProfileDto) {
+
+    console.log(typeof dto.userId, " " ,typeof req.user.id);
+    console.log(dto.userId, " " , req.user.id);
+
+    try {
+
+      const user = req.user;
+      let curUserId: number;
+
+      if (dto.userId === undefined || dto.userId === user.id) {
+        console.log('accept1');
+        curUserId = user.id;
+        dto.userId = curUserId;
+      } else if (dto.userId && this._getSelectedRole("ADMIN", user.roles).value) {
+        console.log('accept2');
+        curUserId = dto.userId;
+      } else {
+        console.log('accept3');
+        throw new HttpException('Доступ к изменению чужого профиля запрещен', HttpStatus.BAD_REQUEST);
+      }
+
+      await this.profileRepository.update(dto, { where: { userId: curUserId } });
+      return {status: 'OK'};
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  async deleteProfile(req: any, dto: CreateProfileDto) {
     try {
 
       const user = req.user;
@@ -35,44 +64,20 @@ export class ProfilesService {
       } else if (dto.userId && this._getSelectedRole("ADMIN", user.roles).value) {
         curUserId = dto.userId;
       } else {
-        throw new Error("Доступ к изменению чужого профиля запрещен");
+        throw new HttpException('Доступ к изменению чужого профиля запрещен', HttpStatus.BAD_REQUEST);
       }
-      const profile = await this.profileRepository.update(dto, { where: { userId: curUserId } });
-      return profile;
-    } catch (e) {
-      console.log(e);
-    }
-  }
 
-  async deleteProfile(req: any, dto: CreateProfileDto) {
-
-    try {
-      const user = req.user;
-      let userId: number;
-
-      if (this._getSelectedRole("ADMIN", user.roles)) {
-        userId = dto.userId;
-      } else {
-        userId = user.id;
-        dto.userId = userId;
-      }
-      const profile = await this.profileRepository.destroy({ where: { userId } });
-      return profile;
+      await this.profileRepository.destroy({ where: { userId: curUserId } });
+      return {status: 'OK'};
     } catch (e) {
       console.log(e);
     }
   }
 
   private _getSelectedRole(roleName: string, rolesArray: Array<any>) {
-
-    const answ = rolesArray.find(role => role.value === roleName);
-    console.log(answ);
+    let answ = rolesArray.find(role => role.value === roleName);
+    answ = (answ === undefined) ? {value: undefined} : answ;
     return answ;
   }
-
-  // async getRoleByValue(value: string) {
-  //   const role = await this.profileRepository.findOne({where: {value}})
-  //   return role;
-  // }
 
 }

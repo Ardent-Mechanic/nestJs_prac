@@ -1,7 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsInt, IsPhoneNumber, IsString, Length, Max, Min } from "class-validator";
-import { Column, DataType, ForeignKey } from "sequelize-typescript";
-import { User } from "../../users/users.model";
 
 
 export class CreateProfileDto {
@@ -25,6 +23,6 @@ export class CreateProfileDto {
   @Length(12, 12, { message: "ровно 12 символов" })
   readonly phoneNumber: string;
 
-  @ApiProperty({ example: "1", description: "id пользователя" })
+  @ApiProperty({ example: "1", description: "id пользователя (не обязательный параметр)" })
   userId: number;
 }

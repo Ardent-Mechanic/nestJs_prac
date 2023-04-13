@@ -1,46 +1,52 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Req, UseGuards } from "@nestjs/common";
 import {ProfilesService} from "./profiles.service";
 import {CreateProfileDto } from "./dto/create-profile.dto";
-import { RolesGuard } from "../auth/roles.guard";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
-import { Roles } from "../auth/roles-auth.decorator";
-import { ApiResponse } from "@nestjs/swagger";
+import { ApiExtraModels, ApiOkResponse, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiOkResponseShowProfile } from "./decorators/user-profile.response";
+import { User } from "../users/users.model";
+import { Profile } from "./profile.model";
 
+@ApiTags("Профили")
 @Controller('profile')
+@ApiExtraModels(Profile, User)
 export class ProfileController {
   constructor(private profileService: ProfilesService) {}
 
-  @ApiResponse({status: 200})
-  @UseGuards(JwtAuthGuard)
-  //@UseGuards(RolesGuard)
   @Post()
+  @ApiOperation({ summary: "Создать профиль" })
+  @ApiOkResponseShowProfile(User)
+  @UseGuards(JwtAuthGuard)
   createProfileInfo(@Body() dto: CreateProfileDto, @Req() req: any) {
     const user = req.user;
     dto.userId = user.id;
     return this.profileService.createProfile(dto);
   }
 
-  @ApiResponse({status: 200})
-  @UseGuards(JwtAuthGuard)
-  //@UseGuards(RolesGuard)
   @Get()
+  @ApiOperation({ summary: "Получить профиль" })
+  @ApiOkResponseShowProfile(User)
+  @UseGuards(JwtAuthGuard)
   getProfileInfo(@Req() req: any) {
     const user = req.user;
-    console.log(req.user);
     return this.profileService.getProfile(user.id);
   }
 
-  @ApiResponse({status: 200})
-  @UseGuards(JwtAuthGuard)
   @Patch('/update')
+  @ApiOperation({ summary: "Обновить профиль" })
+  @ApiOkResponse({ status: 200,
+    schema: { properties: {status: {default: 'OK' }}}})
+  @UseGuards(JwtAuthGuard)
   updateProfileInfo(@Body() dto: CreateProfileDto, @Req() req) {
+    console.log(dto);
     return this.profileService.updateProfile(req, dto);
   }
 
-  // @UseGuards(JwtAuthGuard)
-  @ApiResponse({status: 200})
-  @UseGuards(JwtAuthGuard)
   @Delete('/delete')
+  @ApiOperation({ summary: "Удалить профиль" })
+  @ApiOkResponse({ status: 200,
+    schema: { properties: {status: {default: 'OK' }}}})
+  @UseGuards(JwtAuthGuard)
   deleteProfileInfo(@Body() dto: CreateProfileDto, @Req() req) {
     return this.profileService.deleteProfile(req, dto);
   }
