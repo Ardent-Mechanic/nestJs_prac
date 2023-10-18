@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Post, UseGuards } from "@nestjs/common";
 import {RolesService} from "./roles.service";
 import {CreateRoleDto} from "./dto/create-role.dto";
 import { RolesGuard } from "../auth/roles.guard";
-import { ApiOkResponse, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { User } from "../users/users.model";
 import {JwtAuthGuard} from "../auth/jwt-auth.guard";
 import { Role } from "./roles.model";
@@ -10,6 +10,7 @@ import { Roles } from "../auth/roles-auth.decorator";
 
 @ApiTags("Роли")
 @Controller('roles')
+@ApiBearerAuth('JWT-auth')
 export class RolesController {
     constructor(private roleService: RolesService) {}
 

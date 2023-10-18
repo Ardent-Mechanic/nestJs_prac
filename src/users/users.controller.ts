@@ -2,10 +2,11 @@ import { Body, Controller, Get, Post, UseGuards, UsePipes } from "@nestjs/common
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UsersService } from "./users.service";
 import {
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiExtraModels,
   ApiHeader, ApiOkResponse,
-  ApiOperation,
+  ApiOperation, ApiQuery,
   ApiResponse,
   ApiTags,
   getSchemaPath
@@ -25,6 +26,7 @@ import { Role } from "../roles/roles.model";
 @ApiTags("Пользователи")
 @Controller("users")
 @ApiExtraModels(Role)
+@ApiBearerAuth('JWT-auth')
 export class UsersController {
 
   constructor(private usersService: UsersService) {

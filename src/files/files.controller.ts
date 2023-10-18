@@ -10,7 +10,7 @@ import {
   UseGuards,
   UseInterceptors
 } from "@nestjs/common";
-import { ApiOkResponse, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { Roles } from "../auth/roles-auth.decorator";
 import { RolesGuard } from "../auth/roles.guard";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -21,6 +21,7 @@ import { Files } from "./files.model";
 
 @ApiTags("Файлы")
 @Controller("files")
+@ApiBearerAuth('JWT-auth')
 export class FilesController {
   constructor(private fileService: FilesService) {}
 
